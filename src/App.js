@@ -1,6 +1,7 @@
 import React , {Component} from 'react';
 import './App.css';
-
+import Timer from './components/Timer/Timer'
+let s = null
 class App extends Component {
   constructor(props) {
     super(props);
@@ -10,34 +11,38 @@ class App extends Component {
   }
 
   startTimer = () => {
+    if (!this.state.time) alert("reset it");
+    else {
+      s = setInterval(() => {
+        this.setState({
+          time: this.state.time - 1
+        })
+        if (!this.state.time) this.stopTimer();
+      }, 1000)
     
-    let s = setInterval(() => {
-      this.setState({
-        time : this.state.time - 1 
-      })
-      if (!this.state.time) clearInterval(s);
-    },1000)
-    
+    }
   }
-
+  stopTimer = () => {
+    clearInterval(s)
+  }
   formatTime = (time) => {
     return `${Math.floor(time/60)}:${time%60}`
+  }
+  resetTimer = () => {
+    clearInterval(s)
+    this.setState({
+      time : 20
+    })
   }
   render() {
     return (
       <div className="timer-container">
-        <div class="base-timer">
-          <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-           <g class="base-timer__circle">
-             <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" />
-           </g>
-          </svg>
-          <span className = "base-timer__label">
-            {this.formatTime(this.state.time)}
-          </span>
+        <Timer time={`${Math.floor(this.state.time / 60)}:${this.state.time % 60}`} />
+        <div className="button-container">
+          <button onClick={this.startTimer}> start</button>
+          <button onClick={this.stopTimer}> pause</button>
+          <button onClick={this.resetTimer}> reset</button>
         </div>
-        <button onClick = {this.startTimer}> </button>
-
       </div>
     )
   }
