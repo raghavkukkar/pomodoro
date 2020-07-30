@@ -13,12 +13,14 @@ class Modal extends Component {
         })
     }
     render() {
-        return (<div className="modal">
+        return (<div className={this.props.isOpen ? 'modal down': 'modal'}>
             <form onSubmit = {this.props.submitHandler.bind(this,this.state.time)}>
                 <label htmlFor="time"> Enter Time </label>
-                <input name="time" type="text" value={`${this.state.time}`} onChange = {this.handleIt} ></input>
-                <input type="submit" />
+                <input name="time" type="text" value={`${this.state.time}`} onChange = {this.handleIt}></input>
+                <input type="submit" value = "submit"/>
+                
             </form>
+            <button onClick = {this.props.closer}>close</button>
         </div>);
     }
 }

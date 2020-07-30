@@ -20,6 +20,7 @@ class App extends Component {
       timer : x
     })
     e.preventDefault();
+    this.openModal();
   }
   openModal = () => {
     this.setState({
@@ -68,7 +69,8 @@ class App extends Component {
         <Buttons startTimer={this.startTimer} stopTimer={this.stopTimer} resetTimer={this.resetTimer} changeTime={this.openModal} />
         
         </div>
-        {this.state.modalIsOpen ? <Modal time={30} submitHandler={this.timeChanger} />:<React.Fragment></React.Fragment>}
+        <Modal time={this.state.time} submitHandler={this.timeChanger} isOpen={this.state.modalIsOpen} closer={this.openModal}/>
+        
       </React.Fragment>
     )
   }
