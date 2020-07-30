@@ -64,14 +64,14 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
+      <div className = {this.state.modalIsOpen? "overlay":""}></div>  
       <div className="timer-container">
-        <Timer time={`${Math.floor(this.state.timer / 60)}:${this.state.timer % 60}`} />
+        <Timer time={`${Math.floor(this.state.timer / 60)}:${parseInt(this.state.timer % 60)}`} />
         <Buttons startTimer={this.startTimer} stopTimer={this.stopTimer} resetTimer={this.resetTimer} changeTime={this.openModal} />
         
         </div>
         <Modal time={this.state.time} submitHandler={this.timeChanger} isOpen={this.state.modalIsOpen} closer={this.openModal}/>
-        
-      </React.Fragment>
+        </React.Fragment>
     )
   }
 }
