@@ -41,12 +41,14 @@ class App extends Component {
 
 //stopper function
   stopTimer = () => {
-    clearInterval(s)
+    clearInterval(s);
+    s = null;
   }
 
   //timer reseter
   resetTimer = () => {
     clearInterval(s)
+    s = null;
     this.setState({
       timer : this.state.time
     })
@@ -67,30 +69,34 @@ class App extends Component {
 startTimer = () => {
   if (!this.state.time) alert("reset it");
   else {
-    s = setInterval(() => {
-      this.setState({
-        timer: this.state.timer - 1
-      })
-      if (!this.state.timer) {
-        this.stopTimer();
-        if (!this.state.break) {
-          if (window.confirm("start the break")) {
-            this.break();
+    if (!s) {
+      s = setInterval(() => {
+        this.setState({
+          timer: this.state.timer - 1
+        })
+        if (!this.state.timer) {
+          this.stopTimer();
+          if (!this.state.break) {
+            if (window.confirm("start the break")) {
+              this.break();
+            }
           }
-        }
-        else {
-          if (window.confirm("reset the pomodoro")) {
-            this.setState({
-              time: 15,
-              timer: 15,
-              break : !this.state.break
-            })
+          else {
+            if (window.confirm("reset the pomodoro")) {
+              this.setState({
+                time: 15,
+                timer: 15,
+                break: !this.state.break
+              })
+            }
           }
-        }
        
-      }
-    }, 1000)
-  
+        }
+      }, 1000)
+    }
+    else {
+      alert("shutup");
+    }
   }
 }
   render() {
