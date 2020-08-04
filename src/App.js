@@ -9,12 +9,15 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      time: 10,
-      timer : 10,
+      time: 1500,
+      timer : 1500,
       file: "/Assets/beat.mp3",
       modalIsOpen: false,
       break: false,
-      breakCount: 1    }
+      breakCount: 1
+    }
+    this.audio = new Audio(this.state.file);
+    
   }
 
   //modal submit handler
@@ -33,11 +36,6 @@ class App extends Component {
       modalIsOpen : !this.state.modalIsOpen
     })
   }
-  // audio play
-  playAudio = (file) =>{
-    let audio = new Audio(file);
-    audio.play();
-  }
 
 //stopper function
   stopTimer = () => {
@@ -55,7 +53,7 @@ class App extends Component {
   }
   //break manager
   break() {
-   let  x = !(this.state.breakCount % 4) ? 11 : 3;
+   let  x = !(this.state.breakCount % 4) ? 1800 : 300;
     this.setState({
       time: x,
       timer: x,
@@ -76,6 +74,8 @@ startTimer = () => {
         })
         if (!this.state.timer) {
           this.stopTimer();
+          
+          this.audio.play()
           if (!this.state.break) {
             if (window.confirm("start the break")) {
               this.break();
@@ -84,8 +84,8 @@ startTimer = () => {
           else {
             if (window.confirm("reset the pomodoro")) {
               this.setState({
-                time: 15,
-                timer: 15,
+                time: 1500,
+                timer: 1500,
                 break: !this.state.break
               })
             }
