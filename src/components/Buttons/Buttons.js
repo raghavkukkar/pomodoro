@@ -1,14 +1,16 @@
 import React from 'react';
 
 function Buttons(props) {
+  let y = Object.keys(props);
+  let x = Object.values(props).map((o, i) => {
     return (
-        <div className="button-container">
-          <button onClick={props.startTimer}> start</button>
-          <button onClick={props.stopTimer}> pause</button>
-          <button onClick={props.resetTimer}> reset</button>
-          <button onClick={props.changeTime}> change time</button>
-        </div>
+      <button key={i} onClick={o}>
+        {y[i]}
+      </button>
     );
+  });
+
+  return <div className="button-container">{x}</div>;
 }
 
-export default Buttons
+export default Buttons;
