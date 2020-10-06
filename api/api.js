@@ -1,14 +1,16 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const cors = require('cors');
 const routes = require('./routes/route');
 const PORT = process.env.PORT || 5000;
 const mongo = require('./db/db');
 const auth = require('./auth/auth');
 const database = mongo.connect;
+dotenv.config({ path: './config/config.env' });
 // const server = require('mongodb').MongoClient;
 const app = express();
 
-const uri = '';
+const uri = process.env.URI;
 
 const con = database(uri, (err) => {
   if (err) {

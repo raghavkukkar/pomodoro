@@ -18,5 +18,7 @@
     "mongodb": "^3.6.1",
     "session-file-store": "^1.4.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
 }
