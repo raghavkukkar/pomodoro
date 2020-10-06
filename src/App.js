@@ -6,13 +6,15 @@ import Modal from './components/Modal/Modal';
 import Todo from './components/Todo/Todo';
 import Login from './components/Login/Login';
 import LoginHandler from './components/LoginHandler/LoginHandler';
+import Loader from './components/Loader/Loader';
+import Errors from './components/Errors/Errors';
 let s = null;
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       time: 1500,
-      isLogged: false,
+      isLogged: 'N',
       timer: 1500,
       file: '/Assets/beat.mp3',
       modalIsOpen: false,
@@ -23,6 +25,74 @@ class App extends Component {
     };
     this.audio = new Audio(this.state.file);
   }
+  componentDidMount = () => {
+    if (this.state.isLogged === 'N') {
+    }
+  };
+  signup = (username, password, callback) => {
+    fetch('http://localhost:5000/signup', {
+      method: 'POST',
+      body: JSON.stringify({ username: username, password: password }),
+    })
+      .then((res) => {
+        if (!res.ok || res.status !== 200) throw new Error('http error');
+        res.json();
+      })
+      .then((res) => localStorage.setItem('token', res.token));
+  };
+  login = (username, password, callback) => {
+    this.setState({ isLogged: 'L' });
+    fetch('http://localhost:5000/login', {
+      method: 'POST',
+      body: JSON.stringify({ username: username, password: password }),
+    })
+      .then((res) => {
+        if (!res.ok || res.status !== 200)
+          throw new Error('Some shit happened sorry , pls try again.');
+        res.json();
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          window.localStorage.setItem('token', res.message.token);
+          callback();
+        } else {
+          //do something
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+  getList = () => {
+    let c;
+    if ((c = window.localStorage.getItem('token'))) {
+      fetch('http://localhost:5000/lists', {
+        method: 'GET',
+        headers: {
+          authorization: `Bearer ${c}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok || res.status !== 200)
+            throw new Error(
+              'hey something happened, you should probably try again'
+            );
+          res.json();
+        })
+        .then((res) => {
+          if (res.status !== 501 && res.status !== 500) {
+            this.setState({
+              list: [...this.state.list, res.list],
+              isLogged: 'Y',
+            });
+          } else {
+            //do something
+          }
+        })
+        .catch((e) => console.error(e));
+    }
+  };
+
   //time string generator
   timeGenerator = () => {
     let x = Math.floor(this.state.timer / 60);
@@ -33,9 +103,41 @@ class App extends Component {
   };
   //list submit
   listAdder = (x, e) => {
-    this.setState({
-      list: [...this.state.list, x],
-    });
+    let c;
+    if ((c = window.localStorage.getItem('token'))) {
+      fetch('http://localhost:5000/lists', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${c}`,
+        },
+        body: JSON.stringify({ list: [...this.state.list, x] }),
+      })
+        .then((res) => {
+          if (!res.ok || res.status !== 200) throw new Error('http error');
+          res.json();
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            this.setState({
+              list: [...this.state.list, x],
+            });
+          }
+        });
+
+      e.preventDefault();
+    }
+  };
+  logout = () => {
+    if (window.localStorage.getItem('token')) {
+      window.localStorage.removeItem('token');
+      this.setState({ isLogged: 'N' });
+    }
+  };
+  //login main function
+  loginMain = (username, password, e) => {
+    if (this.state.isLogged === 'N') {
+      this.login(username, password, this.getList());
+    }
     e.preventDefault();
   };
   //list id checker
@@ -152,6 +254,28 @@ class App extends Component {
       }
     }
   };
+  //loader and login
+  listLoad = () => {
+    switch (this.state.isLogged) {
+      case 'Y':
+        return (
+          <Todo
+            statusHandler={this.statusHandler}
+            list={this.state.list}
+            listAdder={this.listAdder}
+          />
+        );
+      case 'N':
+        return <LoginHandler openLogin={this.openLogin} />;
+      case 'L':
+        return <Loader />;
+      case 'E':
+        return <Errors />;
+
+      default:
+        break;
+    }
+  };
   //buttons handler
   buttons = () => {
     if (s) {
@@ -188,15 +312,7 @@ class App extends Component {
 
             {this.buttons()}
           </div>
-          {this.state.isLogged ? (
-            <Todo
-              statusHandler={this.statusHandler}
-              list={this.state.list}
-              listAdder={this.listAdder}
-            />
-          ) : (
-            <LoginHandler openLogin={this.openLogin} />
-          )}
+          {this.listLoad()}
         </div>
         <Modal
           time={this.state.time}

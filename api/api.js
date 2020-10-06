@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const routes = require('./routes/route');
 const PORT = process.env.PORT || 5000;
 const mongo = require('./db/db');
@@ -31,10 +32,11 @@ const createError = (err) => {
       break;
   }
 };
+app.use(cors());
 app.use(express.json());
-
+app.use('/sign', auth.signHandler);
 app.use('/login', auth.loginHandler);
-app.use('/', auth.checkToken, routes);
+app.use('/lists', auth.checkToken, routes);
 app.use((req, res, next) => {
   res.statusCode = 404;
   res.json(createError(404));

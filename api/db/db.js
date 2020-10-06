@@ -14,15 +14,56 @@ exports.connect = async function (uri, done) {
 exports.get = () => {
   return object;
 };
-
-exports.getauth = function getauth(user, pass, callback) {
+exports.getUser = function getauth(user, callback) {
   let data = object.db('todoapp');
   let cl = data.collection('users');
-  cl.findOne({ username: user, pass: pass })
+  cl.findOne({ username: user })
     .then(function (data) {
       callback(data);
     })
     .catch((err) => callback(err));
+};
+
+exports.getauth = function getauth(user, pass, callback) {
+  let data = object.db('todoapp');
+  let cl = data.collection('users');
+  cl.findOne({ username: user, password: pass })
+    .then(function (data) {
+      callback(data);
+    })
+    .catch((err) => callback(err));
+};
+exports.adduser = function adduser(user, pass, callback) {
+  let data = object.db('todoapp');
+  let cl = data.collection('users');
+  if (pass.length < 8) {
+    return new Error('bitch add some characters');
+  }
+  cl.insertOne({
+    username: user,
+    password: pass,
+  })
+    .then((data) => {
+      callback(data);
+    })
+    .catch((err) => {
+      callback(err);
+    });
+};
+
+exports.adduserList = function adduser(user, callback) {
+  let data = object.db('todoapp');
+  let cl = data.collection('todolist');
+  cl.insertOne({
+    username: user,
+    list: [],
+  })
+    .then((data) => {
+      callback(data);
+    })
+    .catch((err) => {
+      callback(err);
+    });
 };
 
 // var state = {

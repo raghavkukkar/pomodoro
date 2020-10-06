@@ -1,59 +1,97 @@
 import React, { Component } from 'react';
-import Buttons from '../Buttons/Buttons';
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      edit: true,
       signup: false,
+      username: '',
+      password: '',
+      uverified: false,
     };
-    this.logged = <div></div>;
   }
+  setter = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+  verification = (names) => {
+    switch (names) {
+      case 'password':
+        if (
+          this.state.password.length !== 0 &&
+          this.state.password.length < 8
+        ) {
+          return (
+            <span style={{ color: 'red' }}> enter atleast 8 characters</span>
+          );
+        }
+        return null;
+
+      case 'username':
+        if (
+          this.state.username.length !== 0 &&
+          this.state.username.length < 8
+        ) {
+          return (
+            <span style={{ color: 'red' }}> enter atleast 8 characters</span>
+          );
+        }
+        return null;
+      default:
+        break;
+    }
+  };
   loginview = () => {
     return (
       <div className="loginview">
         <form>
-          <label htmlFor="lusername"></label>
-          <input id="lusername" type="text" placeholder="username"></input>
-          <label htmlFor="lpassword"></label>
-          <input id="lpassword" type="password" placeholder="password"></input>
-          <label
-            htmlFor="lnickname"
-            className={this.state.signup ? '' : 'disabled'}
-          ></label>
-          <input
-            id="lnickname"
-            type="text"
-            className={this.state.signup ? '' : 'disabled'}
-            placeholder="nickname"
-          ></input>
-        </form>
-      </div>
-    );
-  };
-  info = () => {
-    return (
-      <div className="info">
-        <form>
           <label htmlFor="username"></label>
-          <input type="text" id="username" disabled={this.state.edit}></input>
+          <input
+            name="username"
+            id="username"
+            type="text"
+            placeholder="username"
+            value={this.state.username}
+            onChange={this.setter}
+          ></input>
+          {this.verification('username')}
           <label htmlFor="password"></label>
           <input
-            type="password"
+            className={this.props.logged}
+            name="password"
             id="password"
-            disabled={this.state.edit}
+            type="password"
+            placeholder="password"
+            value={this.state.password}
+            onChange={this.setter}
           ></input>
-          <label htmlFor="nickname"></label>
-          <input type="text" id="nickname" disabled={this.state.edit}></input>
+          {this.verification('password')}
         </form>
       </div>
     );
   };
   buttons = () => {
     if (this.state.signup) {
-      return <Buttons SignUp={null} />;
+      return (
+        <button
+          disabled={
+            this.state.username.length < 8 || this.state.password.length < 8
+          }
+        >
+          {' '}
+          signup
+        </button>
+      );
     } else {
-      return <Buttons SignIn={null} />;
+      return (
+        <button
+          disabled={
+            this.state.username.length < 8 || this.state.password.length < 8
+          }
+        >
+          signin
+        </button>
+      );
     }
   };
   signupHandler = () => {
@@ -68,7 +106,7 @@ class Login extends Component {
           close
         </i>
         <span>{this.state.signup ? 'Sign Up' : 'Sign In'}</span>
-        {this.props.logged ? this.info() : this.loginview()}
+        {this.loginview()}
         {this.buttons()}
         <span
           style={{ color: 'grey', cursor: 'pointer' }}
