@@ -1,2 +1,2 @@
-let x = true;
-console.log(typeof x);
+let e = new Error('hello')
+console.log(e.message);

@@ -74,6 +74,7 @@ class Login extends Component {
     if (this.state.signup) {
       return (
         <button
+          onClick = {this.props.signupHandler.bind(this,this.state.username,this.state.password)}
           disabled={
             this.state.username.length < 8 || this.state.password.length < 8
           }
@@ -84,7 +85,7 @@ class Login extends Component {
       );
     } else {
       return (
-        <button
+        <button onClick = {this.props.loginHandler.bind(this,this.state.username,this.state.password)}
           disabled={
             this.state.username.length < 8 || this.state.password.length < 8
           }
